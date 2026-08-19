@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  background: #EEF1E9;
+  color: #16302A;
+  font-family: Georgia, "Palatino Linotype", Palatino, serif;
+}
+
+::selection {
+  background: #A8813F;
+  color: #fff;
+}
+
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid #A8813F;
+  outline-offset: 1px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #D9DECE;
+  border-radius: 4px;
+  padding: 18px;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #D9DECE;
+  border-radius: 3px;
+  padding: 8px 10px;
+  font-size: 14.5px;
+  background: #FCFCF9;
+  color: #16302A;
+}
+
+.btn {
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 3px;
+  padding: 9px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 0.15s;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: #16302A; color: #F6F5EF; }
+.btn-brass { background: #A8813F; color: #fff; }
+.btn-ghost { background: transparent; color: #16302A; border-color: #D9DECE; }
+.btn-danger { background: transparent; color: #B0342A; border-color: #e3c8c4; }
+
+.tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: 3px;
+  padding: 2px 7px;
+  display: inline-block;
+  background: #F1EFE4;
+  color: #3A544A;
+}
+
+.bubble {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #D9DECE;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: transparent;
+  color: #3A544A;
+  cursor: pointer;
+}
+.bubble-filled { background: #16302A; border-color: #16302A; color: #fff; }
+.bubble-correct { background: #2F6B4F; border-color: #2F6B4F; color: #fff; }

@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS student_answers;
+DROP TABLE IF EXISTS exam_attempts;
+DROP TABLE IF EXISTS exam_questions;
+DROP TABLE IF EXISTS exams;
+DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS generation_jobs;
+DROP TABLE IF EXISTS document_chunks;
+DROP TABLE IF EXISTS documents;
+DROP TABLE IF EXISTS subjects;
+DROP TABLE IF EXISTS users;

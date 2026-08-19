@@ -1,0 +1,73 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: examuser
+      POSTGRES_PASSWORD: exampass
+      POSTGRES_DB: examplatform
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Official postgres image auto-runs any .sql files placed here on first init.
+      # Only the "up" migration is mounted so a fresh container isn't torn down again.
+      - ./backend/migrations/0001_init.up.sql:/docker-entrypoint-initdb.d/0001_init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U examuser -d examplatform"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      DATABASE_URL: postgres://examuser:exampass@postgres:5432/examplatform?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET:-change-this-to-a-long-random-string}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      DOCS_STORAGE_PATH: /app/storage/documents
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost:3000}
+    ports:
+      - "8080:8080"
+    volumes:
+      - docs:/app/storage/documents
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://examuser:exampass@postgres:5432/examplatform?sslmode=disable
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      WORKER_POLL_SECONDS: 3
+    volumes:
+      - docs:/app/storage/documents
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+  docs:
