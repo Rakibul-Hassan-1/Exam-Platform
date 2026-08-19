@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"log" // <-- ADDED
 	"net/http"
 	"strings"
 
@@ -32,6 +33,7 @@ type authResponse struct {
 
 // Register handles POST /api/v1/auth/register
 func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
+
 	var req registerRequest
 	if err := httpx.DecodeJSON(r, &req); err != nil {
 		httpx.Error(w, http.StatusBadRequest, "invalid request body")
@@ -52,6 +54,7 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 
 	hash, err := HashPassword(req.Password)
 	if err != nil {
+		log.Printf("register: hash password failed: %v", err) // <-- ADDED
 		httpx.Error(w, http.StatusInternalServerError, "failed to process password")
 		return
 	}
@@ -62,12 +65,14 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 			httpx.Error(w, http.StatusConflict, err.Error())
 			return
 		}
+		log.Printf("register: create user failed: %v", err) // <-- ADDED
 		httpx.Error(w, http.StatusInternalServerError, "failed to create user")
 		return
 	}
 
 	token, err := IssueToken(h.JWTSecret, user.ID, user.Name, user.Role)
 	if err != nil {
+		log.Printf("register: issue token failed: %v", err) // <-- ADDED
 		httpx.Error(w, http.StatusInternalServerError, "failed to issue token")
 		return
 	}
@@ -91,6 +96,7 @@ func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.Repo.GetUserByEmail(r.Context(), req.Email)
 	if err != nil {
+		log.Printf("login: get user by email failed: %v", err) // <-- ADDED
 		httpx.Error(w, http.StatusUnauthorized, "invalid email or password")
 		return
 	}
@@ -101,6 +107,7 @@ func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 
 	token, err := IssueToken(h.JWTSecret, user.ID, user.Name, user.Role)
 	if err != nil {
+		log.Printf("login: issue token failed: %v", err) // <-- ADDED
 		httpx.Error(w, http.StatusInternalServerError, "failed to issue token")
 		return
 	}
